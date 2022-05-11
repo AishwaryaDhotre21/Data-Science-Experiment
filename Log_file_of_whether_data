@@ -1,0 +1,123 @@
+aishwarya@aishwarya-VirtualBox:~$ su - hduser
+Password: 
+hduser@aishwarya-VirtualBox:~$ ls
+analyzelogs  examples.desktop  inputlogs  word_count
+hduser@aishwarya-VirtualBox:~$ pwd
+/home/hduser
+hduser@aishwarya-VirtualBox:~$ start-dfs.sh
+Starting namenodes on [localhost]
+Starting datanodes
+Starting secondary namenodes [aishwarya-VirtualBox]
+2022-04-05 16:33:49,995 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+hduser@aishwarya-VirtualBox:~$ start-yarn.sh
+Starting resourcemanager
+Starting nodemanagers
+hduser@aishwarya-VirtualBox:~$ jps
+4371 Jps
+3382 NameNode
+3751 SecondaryNameNode
+4231 NodeManager
+4073 ResourceManager
+3545 DataNode
+hduser@aishwarya-VirtualBox:~$ ls
+analyzelogs  examples.desktop  inputlogs  word_count
+hduser@aishwarya-VirtualBox:~$ sudo mkdir whether_data
+[sudo] password for hduser: 
+hduser@aishwarya-VirtualBox:~$ ls
+analyzelogs  examples.desktop  inputlogs  whether_data  word_count
+hduser@aishwarya-VirtualBox:~$ pwd
+/home/hduser
+hduser@aishwarya-VirtualBox:~$ sudo chown -R hduser whether_data/
+hduser@aishwarya-VirtualBox:~$ ls
+analyzelogs  examples.desktop  inputlogs  whether_data  word_count
+hduser@aishwarya-VirtualBox:~$ cd whether_data/
+hduser@aishwarya-VirtualBox:~/whether_data$ cd 
+hduser@aishwarya-VirtualBox:~$ ls
+analyzelogs  examples.desktop  inputlogs  whether_data  word_count
+hduser@aishwarya-VirtualBox:~$ sudo cp /home/aishwarya/Downloads/weather-data-hadoop-master/dataset/* ~/whether_data/
+hduser@aishwarya-VirtualBox:~$ cd whether_data/
+hduser@aishwarya-VirtualBox:~/whether_data$ ls
+sample_weather.txt
+hduser@aishwarya-VirtualBox:~/whether_data$ cd 
+
+hduser@aishwarya-VirtualBox:~$ sudo cp /home/aishwarya/Downloads/weather-data-hadoop-master/src/main/java/com/org/vasanth/weather/Weather.java  ~/whether_data/
+hduser@aishwarya-VirtualBox:~$ 
+
+*****File Copying part completed************************************************************
+
+
+hduser@aishwarya-VirtualBox:~/whether_data$ sudo chmod +r *.*
+hduser@aishwarya-VirtualBox:~/whether_data$ ls -al
+total 32
+drwxr-xr-x  2 hduser root    4096 Apr  5 16:44 .
+drwxr-xr-x 13 hduser hadoop  4096 Apr  5 16:37 ..
+-rw-r--r--  1 root   root   12053 Apr  5 16:42 sample_weather.txt
+-rw-r--r--  1 root   root   10909 Apr  5 16:44 Weather.java
+hduser@aishwarya-VirtualBox:~/whether_data$ export CLASSPATH="$HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-client-core-3.3.2.jar:$HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-client-common-3.3.2.jar:$HADOOP_HOME/share/hadoop/common/hadoop-common-3.3.2.jar:~/analyzelogs/SalesCountry/*:$HADOOP_HOME/lib/*"
+hduser@aishwarya-VirtualBox:~/whether_data$ sudo gedit Weather.java 
+
+** (gedit:5090): WARNING **: 16:58:47.044: Set document metadata failed: Setting attribute metadata::gedit-spell-language not supported
+
+** (gedit:5090): WARNING **: 16:58:47.048: Set document metadata failed: Setting attribute metadata::gedit-encoding not supported
+
+** (gedit:5090): WARNING **: 16:58:50.235: Set document metadata failed: Setting attribute metadata::gedit-position not supported
+hduser@aishwarya-VirtualBox:~/whether_data$ export CLASSPATH="$HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-client-core-3.3.2.jar:$HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-client-common-3.3.2.jar:$HADOOP_HOME/share/hadoop/common/hadoop-common-3.3.2.jar:~/analyzelogs/SalesCountry/*:$HADOOP_HOME/lib/*"
+hduser@aishwarya-VirtualBox:~/whether_data$ javac -d . Weather.java 
+hduser@aishwarya-VirtualBox:~/whether_data$ ls
+com  sample_weather.txt  Weather.java
+hduser@aishwarya-VirtualBox:~/whether_data$ cd com/org/weather/
+hduser@aishwarya-VirtualBox:~/whether_data/com/org/weather$ ls
+ Weather.class                   'Weather$Reduce.class'
+'Weather$MapClass.class'         'Weather$ReduceForJob2.class'
+'Weather$MapClassForJob2.class'
+hduser@aishwarya-VirtualBox:~/whether_data/com/org/weather$ 
+
+
+*************** setting permission and creating class files*********************
+
+
+
+
+hduser@aishwarya-VirtualBox:~/whether_data$ ls
+com  sample_weather.txt  Weather.java
+hduser@aishwarya-VirtualBox:~/whether_data$ sudo gedit Manifest.txt
+
+** (gedit:5366): WARNING **: 17:15:35.817: Set document metadata failed: Setting attribute metadata::gedit-spell-language not supported
+
+** (gedit:5366): WARNING **: 17:15:35.818: Set document metadata failed: Setting attribute metadata::gedit-encoding not supported
+
+** (gedit:5366): WARNING **: 17:15:40.644: Set document metadata failed: Setting attribute metadata::gedit-position not supported
+hduser@aishwarya-VirtualBox:~/whether_data$ ls
+com  Manifest.txt  sample_weather.txt  Weather.java
+hduser@aishwarya-VirtualBox:~/whether_data$ jar -cfm weather_data.jar Manifest.txt com/org/weather/*.class
+hduser@aishwarya-VirtualBox:~/whether_data$ ls
+com  Manifest.txt  sample_weather.txt  weather_data.jar  Weather.java
+hduser@aishwarya-VirtualBox:~/whether_data$ 
+
+
+***************creating Manifest and jar file********************
+
+
+
+hduser@aishwarya-VirtualBox:/usr/local/hadoop$ bin/hdfs dfs -mkdir /weather_input_data
+2022-04-05 17:28:03,784 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+
+
+hduser@aishwarya-VirtualBox:/usr/local/hadoop$ $HADOOP_HOME/bin/hdfs dfs -put ~/whether_data/sample_weather.txt /weather_input_data/
+2022-04-05 17:37:12,554 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+hduser@aishwarya-VirtualBox:/usr/local/hadoop$ 
+
+
+**** placing input directory on hadoop ************
+
+
+hduser@aishwarya-VirtualBox:~/whether_data$ $HADOOP_HOME/bin/hadoop jar weather_data.jar /weather_input_data /weather_output_data1 /weather_output_data2
+
+
+************** Running the job ***************************
+
+
+
+
+
+
